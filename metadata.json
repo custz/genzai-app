@@ -1,0 +1,7 @@
+{
+  "name": "GenzAI",
+  "description": "Chatbot AI modern ditenagai oleh Gemini 2.0 Flash & Flash Lite.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
