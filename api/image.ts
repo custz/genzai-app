@@ -10,8 +10,9 @@ export default async function handler(req: any, res: any) {
   try {
     const { prompt } = req.body;
     
-    // Gunakan model gemini-2.5-flash-image
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-image' });
+    // PERBAIKAN: Menggunakan 'imagen-3.0-generate-001' karena 'gemini-2.5-flash-image'
+    // seringkali memiliki limit 0 (tidak tersedia) untuk API Key gratis.
+    const model = genAI.getGenerativeModel({ model: 'imagen-3.0-generate-001' });
     
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -30,11 +31,20 @@ export default async function handler(req: any, res: any) {
     if (base64Image) {
       res.status(200).json({ image: base64Image });
     } else {
-      res.status(500).json({ error: "No image data returned from model" });
+      console.error("No image data in response:", JSON.stringify(response));
+      res.status(500).json({ error: "Model tidak mengembalikan gambar. Kemungkinan limit akun tercapai." });
     }
 
   } catch (error: any) {
     console.error('Image Gen Error:', error);
-    res.status(500).json({ error: error.message });
+    
+    // Penanganan error khusus untuk kuota/limit
+    if (error.status === 429 || error.message?.includes('429')) {
+      return res.status(429).json({ 
+        error: "Kuota habis atau model ini tidak tersedia di Free Tier akun Anda. Coba lagi nanti." 
+      });
+    }
+
+    res.status(500).json({ error: error.message || "Gagal membuat gambar." });
   }
 }
