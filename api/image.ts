@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
     
     // PERBAIKAN: Menggunakan 'imagen-3.0-generate-001' karena 'gemini-2.5-flash-image'
     // seringkali memiliki limit 0 (tidak tersedia) untuk API Key gratis.
-    const model = genAI.getGenerativeModel({ model: 'imagen-3.0-generate-001' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-image' });
     
     const result = await model.generateContent(prompt);
     const response = await result.response;
